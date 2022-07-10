@@ -16,13 +16,24 @@ def get_spending():
     if not spending:
         return jsonify({'error': 'data not found'})
 
-    return jsonify(spending)
+    params = request.args.to_dict()
+    print(params)
+    limit = 10
+    if 'limit' in params and params['limit'].isdigit():
+        limit = int(params['limit'])
+
+    spending_sort = service.sorted_by_date(spending)
+
+    return jsonify(spending_sort[0:limit])
 
 
 @app.route('/api/v1/add_spend', methods=['POST'])
 def add_spend():
     field_names = csvadapter.read_fieldnames()
     params = request.args.to_dict()
+
+    if 'date' not in params:
+        params['date'] = service.get_date()
 
     # validation params
     validate_params, err_desc = service.validate_params(params)
@@ -34,4 +45,4 @@ def add_spend():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

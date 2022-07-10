@@ -10,6 +10,12 @@ def get_date() -> str:
     return x.strftime("%d-%m-%Y")
 
 
+# Func for work with date
+def sorted_by_date(rows: list) -> list:
+    sort_rows = sorted(rows, key=lambda item: datetime.datetime.strptime(item.get("date"), '%d-%m-%Y'), reverse=True)
+    return sort_rows
+
+
 # validation for input params
 def validate_params(params: dict):
     field_names = csvadapter.read_fieldnames()
