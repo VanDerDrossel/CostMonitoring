@@ -17,14 +17,11 @@ def get_spending():
         return jsonify({'error': 'data not found'})
 
     params = request.args.to_dict()
-    print(params)
     limit = 10
     if 'limit' in params and params['limit'].isdigit():
         limit = int(params['limit'])
 
-    spending_sort = service.sorted_by_date(spending)
-
-    return jsonify(spending_sort[0:limit])
+    return jsonify(spending[0:limit])
 
 
 @app.route('/api/v1/add_spend', methods=['POST'])
@@ -44,5 +41,29 @@ def add_spend():
     return jsonify({'result': err_desc})
 
 
+@app.route('/api/v1/calc_spend', methods=['GET'])
+def calc_spend():
+    spending = csvadapter.read_rows()
+
+    if not spending:
+        return jsonify({'error': 'data not found'})
+
+    res = {}
+    for row in spending:
+        keys = row['date'], row['category_description'], row['category_id']
+        if keys in row:
+            res[keys]['cost'] += row['cost']
+        else:
+            res[keys] = row.copy()
+    res = [v for v in res.values()]
+
+    params = request.args.to_dict()
+    limit = 7
+    if 'limit' in params and params['limit'].isdigit():
+        limit = int(params['limit'])
+
+    return jsonify(res[0:limit])
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

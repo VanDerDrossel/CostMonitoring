@@ -1,6 +1,8 @@
 # Interaction with data file CSV
 import csv
 
+import service
+
 
 # File in current directory
 FILE = 'data.csv'
@@ -38,4 +40,4 @@ def normalize_rows(rows: list) -> list:
     for row in rows:
         row['category_id'] = int(row['category_id'])
         row['cost'] = round(float(row['cost']), 2)
-    return rows
+    return service.sorted_by_date(rows)
