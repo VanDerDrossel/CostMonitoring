@@ -51,7 +51,7 @@ def calc_spend():
     res = {}
     for row in spending:
         keys = row['date'], row['category_description'], row['category_id']
-        if keys in row:
+        if keys in res:
             res[keys]['cost'] += row['cost']
         else:
             res[keys] = row.copy()
